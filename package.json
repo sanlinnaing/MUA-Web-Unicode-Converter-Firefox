@@ -1,7 +1,7 @@
 {
   "title": "MUA Web Unicode Converter",
   "name": "mua-converter",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "It is a Firefox addons that will check web content and convert to Unicode encoded text if they are Zawgyi. It use Parabaik Converter and Myanmar Font Tagger Script(by Ko Thant Thet Khin Zaw). ",
   "main": "index.js",
   "author": "Thant Thet Khin Zaw, San Lin Naing",
