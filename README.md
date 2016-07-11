@@ -1,6 +1,14 @@
-#MUA Web Unicode Converter
-<p> MUA Web Unicode Converter Firefox Addons is a tool for Myanmar who want to use Unicode fonts on their Firefox Browser. There are two encoding system in Myanmar, Psuedo Unicode and Unicode encoding. Two encoding conflict each other because of sequence. So we can't see these together. This addons solved that problem by change psudo Unicode encoding text to Unicode 5.1 encoding. So we all can reduce the problem of that comflict on web.</p>
-<p> This Addons use the Parabaik Zawgyi to Unicode convert js scripts by Ko Ngwe Htun and Font Tagger js scripts by Ko Thant Thet Khin Zaw. It remains as with GPL license.</p>
-###Contributors
- * Ko Thant Thet Khin Zaw
- * San Lin Naing
+# MUA-Web-Unicode-Converter
+It is a Chrome extension that will check web content and convert to Unicode encoded text if they are Zawgyi.
+It use Parabaik Converter and Myanmar Font Tagger Script(by Ko Thant Thet Khin Zaw).
+Because of Parabaik Converter, this repo will be under GPL.
+
+####Contributors
+This tools is also contributed by 
+- <a href="https://github.com/thantthet">Ko Thant Thet Khin Zaw</a>.
+- <a href="https://github.com/AungMyoKyaw">Ko Aung Myo Kyaw</a>
+- <a href="https://github.com/thixpin">thixpin</a>
+- And me :laughing:
+
+Thanks all.
+Warmly welcome all contributors :+1:.
