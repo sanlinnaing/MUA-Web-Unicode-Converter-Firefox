@@ -3,7 +3,7 @@
   "description": "This extension will check web content and convert to Unicode encoded text if they are Zawgyi.",
   "manifest_version": 2,
   "name": "MUA Web Unicode Converter",
-  "version": "1.18",
+  "version": "1.18.1",
   "homepage_url": "https://github.com/sanlinnaing/MUA-Web-Unicode-Converter-Firefox-",
   "icons": {
     "48": "/icon48.png"
