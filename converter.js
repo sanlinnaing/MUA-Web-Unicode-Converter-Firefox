@@ -277,27 +277,18 @@ if (document.location.hostname.indexOf("facebook") != -1 || document.location.ho
 
 var list = document.querySelector('body');
 if (!list) {
-    if (document.addEventListener) {
-        if(chrome.storage){//check storage is accessible
-            // Use the handy event callback
-            document.addEventListener("DOMContentLoaded",
-            function() {
-                chrome.storage.local.get("data", function(items) {
-                    if (!chrome.runtime.error) {
-                      //console.log(items);
-                      var enableMUA = items.data;
-                      if(enableMUA != "disable") {
-                        addObserver();
-                      }
-                    } 
-                });
-            }, false);
-        } else {
-            document.addEventListener("DOMContentLoaded",
-            function() {
+    if(chrome.storage){//check storage is accessible
+        chrome.storage.local.get("data", function(items) {
+            if (!chrome.runtime.error) {
+              //console.log(items);
+              var enableMUA = items.data;
+              if(enableMUA != "disable") {
                 addObserver();
-            }, false);
-        }
+              }
+            } 
+        });
+    } else {
+        addObserver();
     }
 } else {
     if (chrome.storage) {//check storage is accessible
