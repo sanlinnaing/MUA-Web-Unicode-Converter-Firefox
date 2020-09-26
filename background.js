@@ -1,5 +1,5 @@
-chrome.storage.local.get("data", function(items) {
-    if (!chrome.runtime.error) {
+chrome.storage.sync.get("data", function(items) {
+    //if (!chrome.runtime.error) {
       //console.log(items);
       var enableMUA = items.data;
       if(enableMUA == "disable") {
@@ -11,5 +11,5 @@ chrome.storage.local.get("data", function(items) {
         chrome.browserAction.setBadgeText({text: "On"});
         chrome.browserAction.setBadgeBackgroundColor({color: "#34A7C1"});
       }
-    } 
+    //} 
 });

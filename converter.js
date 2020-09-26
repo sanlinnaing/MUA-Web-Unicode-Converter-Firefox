@@ -2,9 +2,9 @@
  *   These scripts are part of MUA Web Unicode Converter chrome extension
  *   It use Parabaik Converter developed by Ko Nwge Htun
  *   and Myanmar Font Tagger script developed by Ko Thant Thet Khin Zaw
- *   
  *
- *   
+ *
+ *
  */
 
 'use strict';
@@ -69,9 +69,9 @@ var zawgyiRegex = "\u1031\u103b" // e+medial ra
     + "|\u1039[\u107E-\u1084]";
 
 var Zawgyi = new RegExp(zawgyiRegex);
-/* Myanmar text checking regular expression 
+/* Myanmar text checking regular expression
  *  is the part of Myanmar Font Tagger
- * http://userscripts-mirror.org/scripts/review/103745 
+ * http://userscripts-mirror.org/scripts/review/103745
  */
 var Myanmar = new RegExp("[\u1000-\u1021]");
 
@@ -83,10 +83,10 @@ function isMyanmar(input) {
 }
 
 /*
- * This method will check and search Zawgyi Pattern with input text and 
+ * This method will check and search Zawgyi Pattern with input text and
  * return true, if the text is Zawgyi encoding.
  * Parm = input text
- * return = boolean 
+ * return = boolean
  *
  */
 
@@ -100,15 +100,23 @@ function isZawgyi(input) {
             //  console.log(textSplitted[j]);
             if (j != 0)
                 textSplitted[j] = " " + textSplitted[j];
-            if (Zawgyi.test(textSplitted[j]))
+                var index = (textSplitted[j].match(/[\u1000-\u1021]/i)) ? textSplitted[j].match(/[\u1000-\u1021]/i).index : 0;
+            if (Zawgyi.test(textSplitted[j].substring(index)))
                 return true;
         }
     }
     return false;
 }
 
-/*
- */
+var convToUni = true;
+chrome.storage.sync.get('unicode',function(item){
+    // console.log('convToUni',item.unicode);
+    if(item.unicode===false){
+        convToUni = false;
+    } else {
+        convToUni = true;
+    }
+});
 
 function shouldIgnoreNode(node) {
     if (node.nodeName == "INPUT" || node.nodeName == "SCRIPT" || node.nodeName == "TEXTAREA") {
@@ -136,10 +144,11 @@ function convertTree(parent) {
         if (child.nodeType != Node.TEXT_NODE && child.hasChildNodes()) {
             convertTree(child);
         } else if (child.nodeType == Node.TEXT_NODE) {
-            var text = child.textContent;
+            var text = child.textContent.replace(/[\u200b\uFFFD]/g, "");
+            text = text.replace(/&#8203;/g, "");
             if (text && isMyanmar(text)) {
                 //console.log(text);
-                if (shouldIgnoreNode(parent) == false && isZawgyi(text)) {
+                if (shouldIgnoreNode(parent) == false && isZawgyi(text) && convToUni) {
                     child.textContent = Z1_Uni(text);
                     if (parent.className == null || (parent.classList.contains('_c_o_nvert_') == false && parent.classList.contains('text_exposed_show') == false)) {
                         parent.classList.add('_c_o_nvert_');
@@ -154,8 +163,17 @@ function convertTree(parent) {
                         }
                     }
                 }
-
-
+                if (shouldIgnoreNode(parent) == false && isZawgyi(text)===false && convToUni===false) {
+                    // console.log(parent,child);
+                    if (parent.className == null || (parent.classList.contains('_c_o_nvert_') == false && parent.classList.contains('text_exposed_show') == false)) {
+                        if(font_verification_enable){
+                            parent.classList.add('_c_o_nvert_','i_am_uni_verified');
+                        } else {
+                            parent.classList.add('_c_o_nvert_','i_am_uni');
+                            addNoti();
+                        }
+                    }
+                }
             }
         }
     }
@@ -168,8 +186,8 @@ function findParent(element){
             if(parentElement.lastChild.nodeName == 'DIV'){
                 end = true ;
             } else {
-                parentElement = parentElement.parentNode; 
-            }            
+                parentElement = parentElement.parentNode;
+            }
         } else {
             end = true;
         }
@@ -220,12 +238,10 @@ function addNoti() {
     var id = 'mua-conversion-warning-container';
 
     if (!document.getElementById(id)) {
-        var text = "ဤစာမျက်နှာတွင် ရှိသော ဇော်ဂျီဖြင့် ရေးထားသည့် စာများအား အလိုအလျောက် ပြောင်းလဲထားပါသည်။";
-        var html = '<div class="mua-toast mua-toast-warning" style="display: block;"><div class="mua-toast-message">' + text + '</div></div>'
         var div = document.createElement('div');
         div.id = id;
         div.className = "mua-toast-top-right";
-        div.innerHTML = html;
+        div.innerHTML = '<div class="mua-toast mua-toast-warning" style="display: block;"><div class="mua-toast-message">' + "ဤစာမျက်နှာတွင် ရှိသော ဇော်ဂျီဖြင့် ရေးထားသည့် စာများအား အလိုအလျောက် ပြောင်းလဲထားပါသည်။" + '</div></div>';
         div.style.display = 'none';
         document.body.appendChild(div);
 
@@ -235,7 +251,7 @@ function addNoti() {
                 div.style.opacity = value;
                 div.style.filter = 'alpha(opacity=' + value * 100 + ")";
             }
-            
+
             var op = 0.01;
 
             setOpacity(element, op);
@@ -258,7 +274,7 @@ function addNoti() {
                     setOpacity(element, op);
                     op -= op * 0.1;
                 }, 50);
-            }, 5000);
+            }, 3000);
         }
 
         fadeInAndOut(div);
@@ -275,35 +291,37 @@ if (document.location.hostname.indexOf("facebook") != -1 || document.location.ho
     //console.log("It is facebook");
 }
 
+//  checking this site is disabled me or not.
+var isDisableMUA = document.getElementById("disableMUA") ? true : false;
+console.log("MUA Conver is disabled by site was " + isDisableMUA);
+
 var list = document.querySelector('body');
-if (!list) {
-    if(chrome.storage){//check storage is accessible
-        chrome.storage.local.get("data", function(items) {
-            if (!chrome.runtime.error) {
-              //console.log(items);
-              var enableMUA = items.data;
-              if(enableMUA != "disable") {
-                addObserver();
-              }
-            } 
-        });
-    } else {
-        addObserver();
+
+if (!isDisableMUA && !list) {
+    if (document.addEventListener) {
+        // Use the handy event callback
+        document.addEventListener("DOMContentLoaded",
+            function() {
+                chrome.storage.sync.get("data", function(items) {
+                    //if (!chrome.runtime.error) {
+                      //console.log(items);
+                      var enableMUA = items.data;
+                      if(enableMUA != "disable") {
+                        addObserver();
+                      }
+                    //}
+                });
+            }, false);
     }
-} else {
-    if (chrome.storage) {//check storage is accessible
-        chrome.storage.local.get("data", function(items) {
-            if (!chrome.runtime.error) {
-              //console.log(items);
-              var enableMUA = items.data;
-              if(enableMUA != "disable") {
-                convertTree(document.body);
-                addObserver();
-              }
-            } 
-        });
-    } else {
-        convertTree(document.body);
-        addObserver();
-    }
+} else if(!isDisableMUA) {
+    chrome.storage.sync.get("data", function(items) {
+        //if (!chrome.runtime.error) {
+          //console.log(items);
+          var enableMUA = items.data;
+          if(enableMUA != "disable") {
+            convertTree(document.body);
+            addObserver();
+          }
+        //}
+    });
 }

@@ -1,22 +1,23 @@
-
-chrome.storage.local.get("data", function(items) {
-      //console.log(items.data);
+chrome.storage.sync.get("data", function(items) {
+    //if (!chrome.runtime.error) {
+      //console.log(items);
       var enableMUA = items.data;
       if(enableMUA == "disable") {
         document.getElementById('muaonoffswitch').checked = false;
       } else {
         document.getElementById('muaonoffswitch').checked = true;
       }
+    //}
 });
 
 function enableNow() {
   chrome.browserAction.setIcon({path:"icon19.png"});
   chrome.browserAction.setBadgeText({text: "On"});
   chrome.browserAction.setBadgeBackgroundColor({color: "#34A7C1"});
-  chrome.storage.local.set({ "data" : "enable" }, function() {
-    if (chrome.runtime.error) {
-      console.log("Runtime error.");
-    }
+  chrome.storage.sync.set({ "data" : "enable" }, function() {
+    //if (chrome.runtime.error) {
+      //console.log("Runtime error.");
+    //}
   });
 }
 
@@ -24,10 +25,10 @@ function disableNow() {
   chrome.browserAction.setIcon({path:"icon_disabled.png"});
   chrome.browserAction.setBadgeText({text: "Off"});
   chrome.browserAction.setBadgeBackgroundColor({color: "#ea2839"});
-  chrome.storage.local.set({ "data" : "disable" }, function() {
-    if (chrome.runtime.error) {
-      console.log("Runtime error.");
-    }
+  chrome.storage.sync.set({ "data" : "disable" }, function() {
+    // if (chrome.runtime.error) {
+    //   console.log("Runtime error.");
+    // }
   });
 }
 
@@ -37,13 +38,11 @@ function exit() {
 }
 
 function switchNow() {
-  console.log(document.getElementById('muaonoffswitch').checked);
+  //alert(document.getElementById('muaonoffswitch').checked);
   if(document.getElementById('muaonoffswitch').checked == true) {
     enableNow();
-    //document.getElementById('muaonoffswitch').checked == true
   } else {
     disableNow();
-    //document.getElementById('muaonoffswitch').checked == false
   }
 }
 
@@ -53,7 +52,7 @@ function switchNow() {
         text = WordSegmentor(text);
 
         var words = text.split(/\u200B/g);
-        
+
         var line = '';
 
         for(var n = 0; n < words.length; n++) {
@@ -95,32 +94,9 @@ function switchNow() {
        // draw();
     }
     function bind () {
-/*        
-        canvas.onmousedown = function(e) {
-            bMouseIsDown = true;
-            iLastX = e.clientX - canvas.offsetLeft + (window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft);
-            iLastY = e.clientY - canvas.offsetTop + (window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop);
-        }
-        canvas.onmouseup = function() {
-            bMouseIsDown = false;
-            iLastX = -1;
-            iLastY = -1;
-        }
-        canvas.onmousemove = function(e) {
-            if (bMouseIsDown) {
-                var iX = e.clientX - canvas.offsetLeft + (window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft);
-                var iY = e.clientY - canvas.offsetTop + (window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop);
-                ctx.strokeStyle = 'red';
-                ctx.moveTo(iLastX, iLastY);
-                ctx.lineTo(iX, iY);
-                ctx.stroke();
-                iLastX = iX;
-                iLastY = iY;
-            }
-        };
-*/
+
         var text=document.getElementById('myTextarea');
-        chrome.storage.local.get("textboxval_mua",function(a){
+        chrome.storage.sync.get("textboxval_mua",function(a){
             if(a.textboxval_mua!==undefined){
               text.value=a.textboxval_mua;
             }
@@ -128,7 +104,7 @@ function switchNow() {
         text.onkeypress=function(e){
           //console.log(text.value);
           // console.log(e.which);
-          chrome.storage.local.set({"textboxval_mua":text.value+String.fromCharCode(e.which)});
+          chrome.storage.sync.set({"textboxval_mua":text.value+String.fromCharCode(e.which)});
         };
         $fillText.onclick = function (e) {
           if (document.getElementById('myTextarea').value=="") {
@@ -147,7 +123,7 @@ function switchNow() {
             wrapText(ctx, text, x, y, maxWidth, lineHeight);
             $imgs.innerHTML = "";
             $imgs.appendChild(Canvas2Image.convertToImage(canvas, canvas.width, canvas.height, "png"));
-            chrome.storage.local.set({"textboxval_mua":""});
+            chrome.storage.sync.set({"textboxval_mua":""});
         }
 
     }
@@ -159,7 +135,7 @@ function switchNow() {
         //ctx.fillText(document.getElementById('myTextarea').value, 100, 120);
     }
 
-    function WordSegmentor(input) 
+    function WordSegmentor(input)
 		{
 		var output = input;
 
@@ -176,7 +152,7 @@ function switchNow() {
 
 		return output;
 	}
-    
+
 
 // Add event listeners once the DOM has fully loaded by listening for the
 // `DOMContentLoaded` event on the document, and adding your listeners to
