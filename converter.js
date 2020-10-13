@@ -66,7 +66,12 @@ var zawgyiRegex = "\u1031\u103b" // e+medial ra
     // U | UU | AI + (zawgyi) dot below
     + "|[\u102f\u1030\u1032]\u1094"
     // virama + (zawgyi) medial ra
-    + "|\u1039[\u107E-\u1084]";
+    + "|\u1039[\u107E-\u1084]"
+
+    + "|\u103a[\u1000-\u102A]\u1039"
+    + "|[^\u1010\u1015\u103a\u100b\u1014\u1000\u1019\u100f\u100d]\u1039"  // rule out what should used with \u1039 wi yar ma
+    + "|[\u1060-\u1097][\u1000-\u102A]" //seperate zawgyi wasted space
+    + "|[\u1000-\u102A][\u1060-\u1097]"; //seperate zawgyi wasted space;
 
 var Zawgyi = new RegExp(zawgyiRegex);
 /* Myanmar text checking regular expression
